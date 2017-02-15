@@ -1,0 +1,56 @@
+---
+title: "Playing with Webscraping"
+author: "KevinHo"
+date: "15 February 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## About
+
+This is my first exercise in webscraping using rvest
+I'm following the tutorial listed [here](https://blog.rstudio.org/2014/11/24/rvest-easy-web-scraping-with-r/).
+And the CRAN repository is [here](https://cran.r-project.org/web/packages/rvest/index.html)
+
+## Setup
+
+I'll be using the rvest package and I'll be scraping data from imdb.
+
+*NB: The `html()` function is no deprecated and replaced with the `read_html()` function.*
+
+```{r setupB}
+library(rvest)
+
+lego_movie <- read_html("http://www.imdb.com/title/tt1490017/")
+```
+
+## Get the data
+Use [selectorgadget](http://selectorgadget.com/) to find out which css selector we want to grab the data.
+
+Then we'll use `html_node()` to find the first node that matches the selector, extract the contents with `html_text()` and then convert it to a number using `as.numeric()`
+
+```{r getData}
+lego_movie %>%
+    html_node("strong span") %>%
+    html_text() %>%
+    as.numeric()
+```
+
+
+## My own version
+
+Now that I've run through the tutorial. Here is my own application
+
+```{r asxscrape}
+pANZ <- read_html("https://www.google.com/finance?cid=675233")
+
+pANZ %>%
+    html_node("#price-panel .pr") %>%
+    html_text() %>%
+    as.numeric()
+
+```
