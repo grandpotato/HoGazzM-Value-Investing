@@ -43,9 +43,37 @@ lego_movie %>%
 
 ## My own version
 
-Now that I've run through the tutorial. Here is my own application
+Now that I've run through the tutorial. Here is my own application using several data sources
 
-```{r asxscrape}
+
+
+```{r googfinancescrape}
+pANZ <- read_html("https://www.google.com/finance?cid=675233")
+
+pANZ %>%
+    html_node("#price-panel .pr") %>%
+    html_text() %>%
+    as.numeric()
+
+```
+
+https://finance.yahoo.com/quote/ANZ.NZ?p=ANZ.NZ
+https://www.r-bloggers.com/r-code-yahoo-finance-data-loading/
+
+
+```{r yahoofinancescape}
+pANZ <- read_html("https://www.google.com/finance?cid=675233")
+
+pANZ %>%
+    html_node("#price-panel .pr") %>%
+    html_text() %>%
+    as.numeric()
+
+```
+
+
+
+```{r cbascape}
 pANZ <- read_html("https://www.google.com/finance?cid=675233")
 
 pANZ %>%
