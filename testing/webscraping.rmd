@@ -124,6 +124,9 @@ blah <- getToHost(host,"/d/quotes.csv?s=ANZ.AX&f=aboe","www.yahoo.com",80)
 #rather shitty way to get the data. But it works for the daily stock information. Now for financials.
 values <- strsplit(strsplit(gsub("\\n","",blah), ".*Connection: close\\r\\r")[[1]][2],",")[[1]]
 
+
+
+
 ```
 
 
