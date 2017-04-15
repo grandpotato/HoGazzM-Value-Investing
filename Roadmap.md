@@ -1,11 +1,18 @@
 Tasks
 
+<<<<<<< HEAD
 Basic Ratio Comparison
 1. Build functionality that can read the current stock price - Done
 2. Build functionality to compare to a DB value
 3. Build functionality to create a report of all current status
 4. Scrape financial information  - This is harder than I thought. I need to learn how to POST and retrieve comsec information from behind a portal. Yahoo doesn't seem scrapable and the CSV service doesn't provide financial data.
 5. Get Current stock codes - Done
+=======
+Basic Ratio Comparison  
+1. Build functionality that can read the current stock price  
+2. Build functionality to compare to a DB value  
+3. Build functionality to create a report of all current status  
+>>>>>>> refs/remotes/origin/master
 
 #Can any of this be found online?
 
