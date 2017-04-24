@@ -1,0 +1,469 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head id="ctl00_head1"><title>
+	CommSec | Login to CommSec
+</title>
+<style type="text/css">
+#loginContainer 
+{
+	float:left;	
+	color: White;
+}
+
+#loginContainer a,a:hover
+{
+	color: White;
+	text-decoration: underline;
+}
+
+#loginPanel 
+{
+	float:left;	
+	width: 53%;
+	padding:17px 0px 25px 18px;
+}
+
+.loginlogoutHeading
+{
+    color: #FFC20E;
+    font-size:12pt;
+    font-weight:bold;
+}
+
+#loginCms2 
+{
+	float:left;
+	color: White;
+}
+
+.fullPanel 
+{	
+	width: 100%;
+}
+
+.clearPanel
+{
+	clear: both;
+}
+
+.floatLeft 
+{
+	float:left;
+	width: 20%;
+}
+.floatRight 
+{
+	float: right;
+	width: 20%;
+}
+
+.contentField
+{
+	width: 100%;	
+	margin-bottom: 12px;
+}
+
+
+/* CSS overrides */
+div#ILMenuTop 
+{
+	height: 80px;
+}
+
+div#headerRight 
+{
+	height: 80px;
+	width: 120px;
+}
+
+div#Content
+{
+    width:799px;
+}
+#loginPanel .contentField input.watermark 
+{
+	 color: #999; 
+	 font-size: larger;
+	 font-style:normal;
+}
+
+input.passwordHidden
+{
+	 display: none;
+}
+#ContentContainer 
+{
+    min-height:690px !important;
+}
+
+
+</style>
+<link rel="stylesheet" type="text/css" href="/Static/f7496ae670fc1/common/yui/reset-fonts/reset-fonts-b64.min.css" />
+<link rel="stylesheet" type="text/css" href="/Static/f7496ae670fc1/commsec/css/print-b64.min.css" />
+<link rel="stylesheet" type="text/css" href="/Static/f7496ae670fc1/commsec/css/common-layout-b64.min.css" />
+<link rel="stylesheet" type="text/css" href="/Static/f7496ae670fc1/commsec/css/common-controls-b64.min.css" />
+<link rel="stylesheet" type="text/css" href="/Static/f7496ae670fc1/commsec/css/brand-b64.min.css" />
+
+<script type="text/javascript" src="/Static/f7496ae670fc1/common/js/mbox.js"></script></head>
+
+<body>
+	<form name="aspnetForm" method="post" action="./Login.aspx" id="aspnetForm">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKMTQ2NTg5NTA1OQ9kFgJmD2QWAgIDD2QWAgIJD2QWBAIHDw8WAh4HVmlzaWJsZWdkFgICAQ8WAh8AZ2QCCQ9kFgQCEQ9kFgRmDxQrAAQPFgQfAGgeCU1hbmRhdG9yeWhkaGVoZAICDw8WBB4EVGV4dAUVSSBmb3Jnb3QgbXkgQ2xpZW50IElEHgtOYXZpZ2F0ZVVybAUnL1ByaXZhdGUvTXlQcm9maWxlL1Jlc2V0TXlQYXNzd29yZC5hc3B4FhIeE2RhdGEtbW9kYWwtY2FsbGJhY2sFHkNsaWVudENhbmNlbE1vZGFsRGlhbG9nQ29udHJvbB4RZGF0YS1tb2RhbC1oZWlnaHQFAzY4Mx4VZGF0YS1tb2RhbC13cmFwcGVyLWlkBVJjdGwwMF9jcENvbnRlbnRfbW9kYWxEaWFsb2dMaW5rRGV0YWlsc19tb2RhbERpYWxvZ0NvbnRyb2xfbW9kYWxEaWFsb2dJZnJhbWVXcmFwcGVyHhhkYXRhLWlmcmFtZS1jb250YWluZXItaWQFVGN0bDAwX2NwQ29udGVudF9tb2RhbERpYWxvZ0xpbmtEZXRhaWxzX21vZGFsRGlhbG9nQ29udHJvbF9pZnJhbWVNb2RhbERpYWxvZ0NvbnRhaW5lch4FY2xhc3MFEG9wZW5Nb2RhbERpYWxvZyAeB29uY2xpY2sFDXJldHVybiBmYWxzZTseEGRhdGEtbW9kYWwtdGl0bGUFG0NyZWF0ZSBhIE5ldyBMb2dpbiBQYXNzd29yZB4QZGF0YS1tb2RhbC13aWR0aAUDNjAwHhdkYXRhLW1vZGFsLWNvbnRhaW5lci1pZAVIY3RsMDBfY3BDb250ZW50X21vZGFsRGlhbG9nTGlua0RldGFpbHNfbW9kYWxEaWFsb2dDb250cm9sX3BubE1vZGFsRGlhbG9nZAITD2QWBGYPFCsABA8WBB8AaB8BaGRoZWhkAgIPDxYEHwIFFEkgZm9yZ290IG15IHBhc3N3b3JkHwMFJy9Qcml2YXRlL015UHJvZmlsZS9SZXNldE15UGFzc3dvcmQuYXNweBYSHwQFHkNsaWVudENhbmNlbE1vZGFsRGlhbG9nQ29udHJvbB8FBQM2ODMfBgVTY3RsMDBfY3BDb250ZW50X21vZGFsRGlhbG9nTGlua1Bhc3N3b3JkX21vZGFsRGlhbG9nQ29udHJvbF9tb2RhbERpYWxvZ0lmcmFtZVdyYXBwZXIfBwVVY3RsMDBfY3BDb250ZW50X21vZGFsRGlhbG9nTGlua1Bhc3N3b3JkX21vZGFsRGlhbG9nQ29udHJvbF9pZnJhbWVNb2RhbERpYWxvZ0NvbnRhaW5lch8IBRBvcGVuTW9kYWxEaWFsb2cgHwkFDXJldHVybiBmYWxzZTsfCgUbQ3JlYXRlIGEgTmV3IExvZ2luIFBhc3N3b3JkHwsFAzYwMB8MBUljdGwwMF9jcENvbnRlbnRfbW9kYWxEaWFsb2dMaW5rUGFzc3dvcmRfbW9kYWxEaWFsb2dDb250cm9sX3BubE1vZGFsRGlhbG9nZBgBBR5fX0NvbnRyb2xzUmVxdWlyZVBvc3RCYWNrS2V5X18WAQUYY3RsMDAkY3BDb250ZW50JGNrU2F2ZUlESNq5VpvPgSIyHSUUsYabDPdeYGDCooouELjyEU0PI+A=" />
+
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="EBE86427" />
+		<div id="Body" class="plainheader">
+			
+			<div id="HeaderContainer" class="ILMenuLevel1Only">
+			    
+                    <div id="Header" style="display: none;"></div>
+			    
+			    
+			    <div id="ILMenuTop">
+			        <div id="Logo">
+                        
+                            <a href="https://www.commsec.com.au">&nbsp;</a>
+                        
+				    </div>
+			        
+                    
+                
+                    
+<div id="headerRight" class="floatRight">        
+    <a id="secureImage">Secure page</a>
+</div>
+
+				</div>			    
+			</div>			
+			
+			
+			<div id="ContentContainer">
+                <div id="Content">
+                    
+
+<div class="fullPanel" style="margin-top:20px">
+    <h1>Login to CommSec</h1>       
+</div>
+<br />
+
+<div class="MessagePanel" id="ctl00_cpContent_infoMessage" style="display:none;">
+
+</div>
+<!--<div style="margin-left:80px;padding-top:10px;width:800px">-->
+ <div id="ctl00_cpContent_loginerrorsummary" class="error-summary">
+	
+<!--<div id="loginerrorsummary"  class="error-summary">-->
+    The Client ID or password you entered is incorrect, please try again or <a href="/Private/MyProfile/ResetMyPassword.aspx?icid=124704:commsec:s:public:loginpage:LIB:text:ResetPassword:ErrorMessage" >reset here.</a> </br>Please note, multiple incorrect attempts may result in your account being locked.       
+
+</div>
+<!--</div>-->
+<div id="loginContainer">
+
+   <div id="ctl00_cpContent_pnlLogin" class="Login01">
+	
+        <div id="loginPanel">
+            <div class="contentField">           
+                <input name="ctl00$cpContent$txtLogin" type="text" value="51484768" id="ctl00_cpContent_txtLogin" class="LoginID" autocomplete="off" class="text" style="line-height:25px" />
+            </div>
+                    
+            <div class="contentField">           
+                <input name="ctl00$cpContent$fakepassword" type="text" value="Kuami8acco" id="ctl00_cpContent_fakepassword" class="text LoginPassword" autocomplete="off" style="line-height:25px" />
+                <input name="ctl00$cpContent$txtPassword" type="password" id="ctl00_cpContent_txtPassword" class="text LoginPassword passwordHidden" autocomplete="off" style="line-height:25px" />
+                <input type="hidden" name="ctl00$cpContent$hLegacyStartIn" id="ctl00_cpContent_hLegacyStartIn" />
+            </div>
+                          
+    
+            <div class="contentField" style="margin-left:13px">
+                <input id="ctl00_cpContent_ckSaveID" type="checkbox" name="ctl00$cpContent$ckSaveID" />
+                <label for="ctl00_cpContent_ckSaveID">Remember my Client ID</label>            
+            </div>
+            
+            <div class="contentField">           
+                <input type="submit" name="ctl00$cpContent$btnLogin" value="Login" id="ctl00_cpContent_btnLogin" class="LargeButton" />
+            </div>
+            <div class="clearPanel"></div>
+      </div>
+      
+      <div id="loginCms1">
+        <p class="loginlogoutHeading">Need Help?</p>
+        
+        <ul>
+            <li>
+                      
+                
+<a id="ctl00_cpContent_modalDialogLinkDetails_lnkModalAction" data-modal-callback="ClientCancelModalDialogControl" data-modal-height="683" data-modal-wrapper-id="ctl00_cpContent_modalDialogLinkDetails_modalDialogControl_modalDialogIframeWrapper" data-iframe-container-id="ctl00_cpContent_modalDialogLinkDetails_modalDialogControl_iframeModalDialogContainer" class="openModalDialog " onclick="return false;" data-modal-title="Create a New Login Password" data-modal-width="600" data-modal-container-id="ctl00_cpContent_modalDialogLinkDetails_modalDialogControl_pnlModalDialog" href="/Private/MyProfile/ResetMyPassword.aspx">I forgot my Client ID</a>
+<div id="ctl00_cpContent_modalDialogLinkDetails_modalDialogControl_pnlModalDialog" class="yui-skin-sam OutsideBody">
+		 
+        <div id="ctl00_cpContent_modalDialogLinkDetails_modalDialogControl_modalDialogIframeWrapper" style="z-index: 1000; display: none;">
+            <div class="hd"><span id="ctl00_cpContent_modalDialogLinkDetails_modalDialogControl_lblHeaderText" class="modal-dialog-header-title"></span></div>
+            <div class="bd">
+                <iframe id="ctl00_cpContent_modalDialogLinkDetails_modalDialogControl_iframeModalDialogContainer" src="" frameborder="0" scrolling="no" allowTransparency="true"></iframe>
+            </div>
+        </div>
+
+	</div>
+
+
+                    </li>
+            <li>
+                                   
+                
+<a id="ctl00_cpContent_modalDialogLinkPassword_lnkModalAction" data-modal-callback="ClientCancelModalDialogControl" data-modal-height="683" data-modal-wrapper-id="ctl00_cpContent_modalDialogLinkPassword_modalDialogControl_modalDialogIframeWrapper" data-iframe-container-id="ctl00_cpContent_modalDialogLinkPassword_modalDialogControl_iframeModalDialogContainer" class="openModalDialog " onclick="return false;" data-modal-title="Create a New Login Password" data-modal-width="600" data-modal-container-id="ctl00_cpContent_modalDialogLinkPassword_modalDialogControl_pnlModalDialog" href="/Private/MyProfile/ResetMyPassword.aspx">I forgot my password</a>
+<div id="ctl00_cpContent_modalDialogLinkPassword_modalDialogControl_pnlModalDialog" class="yui-skin-sam OutsideBody">
+		 
+        <div id="ctl00_cpContent_modalDialogLinkPassword_modalDialogControl_modalDialogIframeWrapper" style="z-index: 1000; display: none;">
+            <div class="hd"><span id="ctl00_cpContent_modalDialogLinkPassword_modalDialogControl_lblHeaderText" class="modal-dialog-header-title"></span></div>
+            <div class="bd">
+                <iframe id="ctl00_cpContent_modalDialogLinkPassword_modalDialogControl_iframeModalDialogContainer" src="" frameborder="0" scrolling="no" allowTransparency="true"></iframe>
+            </div>
+        </div>
+
+	</div>
+
+
+            </li>
+        </ul>           
+                <ul>
+<li><a href="https://www.commsec.com.au/support/frequently-asked-questions.html" title="Frequently asked questions">Search our FAQs</a></li>
+<li><a href="https://www.commsec.com.au/support/contact-us.html" title="Enquiries">Send us your question</a></li>
+</ul>
+<br />
+<p class="loginlogoutHeading">Contact us</p>
+<div style="background-image: url('/static/base/commsec/images/icons/icon-twitter-bird.png');background-repeat: no-repeat;padding-left: 25px;line-height: 25px;margin: 0 0 5px 0; font-size: 12px;"><a href="http://www.twitter.com/CommSecSupport">@CommSecSupport</a></div>
+<div style="background-image: url('/static/base/commsec/images/icons/icon-phone.png');background-repeat: no-repeat;padding-left: 25px;line-height: 21px;margin-bottom:0px; font-size: 11pt;font-weight: bold">13 15 19</div>
+<p style="margin-left:30px; font-size:11px;">Mon-Fri, 8am-7pm (Sydney time)</p> 
+      </div>
+      
+    
+</div>    
+    			    			
+</div>
+
+<div id="loginCms2" class="Login02">   
+    <div class="fullPanel">
+    <div class="mboxDefault" data-mboxName="Public_Login_RHSBox"><p class="loginlogoutHeading">Not yet a CommSec customer?</p>
+<p>Open a CommSec trading account now. It's free to join.</p>
+<div style="text-align:right;"><a href="https://www2.commsec.com.au/Private/OnlineApplication/Origination.aspx?icid=90048-public-login-ps"><img src="/media/72250/openaccount-l.jpg" alt="Join now" style="margin-top:30px;"/></a></div></div>
+    </div>
+</div>
+<div class="clearPanel"></div>
+
+<div class="fullPanel">
+    <div class="mboxDefault" data-mboxName="Public_Login_Banners">
+
+<div style="text-align:center; margin-top:20px;">
+
+<a href="https://www.commsec.com.au/features/community.html?icid=125693:commsec:m:private:loginpage:LP1:banner:CommunityEvent:April" target="_blank" class="NoTargetBlankImage"><img src="/media/91176/asktheexperts_may_369x90.gif" style="margin-right:10px;"/></a> 
+
+
+<a href="https://www.commsec.com.au/why-join-commsec/commsec-advisory.html?icid=125633:commsec:cm:private:loginpage:LP2:banner:Advisory:OneOff" target="_blank" class="NoTargetBlankImage"><img src="/media/90214/ooa_369x90.jpg" style="margin-left:10px;"/></a>
+
+
+</div>
+</div>
+</div>
+
+
+<div id="MessageBubble" class="MessageBubble" style="display: none;">
+    <span class="MessagePointer"></span>
+    <a id="MessageClose" class="MessageClose" title="Close" href="javascript:void(0)">Close</a>
+    <span class="MessageBody">	    
+	    <p>For security reasons, do not select <strong>Remember my Client ID</strong> if anyone else uses this computer.</p>   
+    </span>
+</div>
+
+
+
+
+                </div>
+		    </div>
+			
+			
+				
+			    <div id="FooterContainer">
+				    <div id="Footer">
+					    
+				    </div>
+    			    <div id="FooterDisclaim" style="padding-top:15px;">
+<div class="FooterBottom" style="height: 200px; clear: both;">
+<div class="FloatLeft"><strong>Download the CommSec App</strong><br /><br /><a target="_blank" href="https://itunes.apple.com/au/app/commsec-mobile/id880540304?ft=a1" class="NoTargetBlankImage" style="padding-left: 0"><img src="https://www2.commsec.com.au/media/68161/appstore.png" alt="Download the CommSec App on the App Store" BORDER="0" /></a> <a target="_blank" href="https://play.google.com/store/apps/details?id=au.com.commsec.android.CommSec" class="NoTargetBlankImage"><img src="https://www2.commsec.com.au/media/68155/googleplay.png" alt="Download the CommSec App on Google Play"  BORDER="0"/></a>
+<p style="padding:8px 0">Disclaimer: By clicking on the links above you will be taken to itunes.apple.com or play.google.com. <br />These sites are not affiliated with CommSec and may offer a different privacy policy and level of security.<br /><br />This site is directed and available to and for the benefit of Australian residents only.<br />© Commonwealth Securities Limited ABN 60 067 254 399 AFSL 238814 ("CommSec") is a wholly owned, <br />but non-guaranteed, subsidiary of the Commonwealth Bank of Australia ABN 48 123 123 124 AFSL 234945 <br />and both entities are incorporated in Australia with limited liability.</p>
+</div>
+<div class="FloatRight" style="position:static;padding-top: 0px;"><span><strong>Follow us on</strong></span><br /><br /><a target="_blank" href="http://twitter.com/commsec?tid=mf_link" class="NoTargetBlankImage" style="padding:5px"><img src="https://www2.commsec.com.au/media/68137/twitter.png" alt="Follow CommSec on Twitter" BORDER="0"/></a> <a target="_blank" href="https://www.youtube.com/user/CommSecTV" class="NoTargetBlankImage" style="padding:5px"><img src="https://www2.commsec.com.au/media/68143/youtube.png" alt="Follow CommSec on YouTube" BORDER="0"/></a> <br /><br /><a href="https://www.commsec.com.au/support/contact-us.html">Contact us</a><br /><br /><a target="_blank" href="https://www2.commsec.com.au/media/58635/importantinformation.pdf" style="padding-left:5px">Important Information</a> <span class="Spacer">|</span> <a target="_blank" href="/media/57221/fsg.pdf" style="padding-left:5px">Financial Services Guides</a> <span class="Spacer">|</span> <a target="_blank" href="https://www.commbank.com.au/security-privacy/general-security/privacy.html" style="padding-left:5px">Privacy Policy</a></div>
+</div>
+</div>
+			    </div>
+            
+		</div>
+	<script type="text/javascript" src="/Static/f7496ae670fc1/common/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/Static/f7496ae670fc1/common/yui/yahoo-dom-event/yahoo-dom-event.min.js"></script>
+<script type="text/javascript" src="/Static/f7496ae670fc1/common/js/ModalDialogControl.min.js"></script>
+<script type="text/javascript" src="/Static/f7496ae670fc1/common/yui/container/container.min.js"></script>
+
+<script type="text/javascript">
+YAHOO.util.Event.onDOMReady(function() {
+var obj = null;
+AjaxCompatInlineScriptLoad();
+});
+</script>
+<script type="text/javascript">
+function AjaxCompatInlineScriptLoad() {
+
+}
+function AjaxCompatInlineScriptUnload() {
+aspnetForm_submitted = false;
+}
+</script>
+<script language="JavaScript" type="text/javascript">var stats = {};stats.repSuite="commsec-internal-prod"; var omnitureReportSuiteExists = true;var omnitureLinkInternalFilters = "javascript:,comsec.com.au,commsec.com.au,tel:,mailto:,callto:,skype:,dial:"; </script>
+                        <script language="JavaScript" type="text/javascript" src="/Static/f7496ae670fc1/common/js/OmnitureCore.js"></script>
+                        <script language="JavaScript" type="text/javascript"><!--
+                        /* You may give each page an identifying name, server, and channel on
+                        the next lines. */
+                        s.pageName="public:standaloneLogin";
+                        s.pageSampleRate="0";
+                        s.server="CSWSP08I6";
+                        s.channel="Public";
+                        s.pageType="";
+                        s.prop1="Public:";
+                        s.prop2="";
+                        s.prop3="";
+                        s.prop4="";
+                        s.prop5="";
+                        s.prop7="";
+                        s.prop8="";
+                        s.prop10="";  
+                        s.prop19="";  
+                        /* Conversion Variables */
+                        s.campaign="";
+                        s.state="";
+                        s.zip="";
+                        s.events="";
+                        s.products="";
+                        s.purchaseID="";
+                        s.eVar1="";
+                        s.eVar2="";
+                        s.eVar3="";
+                        s.eVar4="";
+                        s.eVar5="";
+                        s.eVar9="";
+                        s.eVar15="";
+                        s.eVar16=""; 
+                        s.eVar19=""; 
+                        s.eVar21=""; 
+                        /************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
+                        var s_code=s.t();if(s_code)document.write(s_code)//--></script>
+                        <script language="JavaScript" type="text/javascript"><!--
+                        if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')
+                        //--></script><noscript><a href="http://www.omniture.com" title="Web Analytics"><img
+                        src="https://commsec.d2.sc.omtrdc.net/b/ss/commsec-internal-prod/1/H.21--NS/0?[AQB]&cdp=3&[AQE]"
+                        height="1" width="1" border="0" alt="" /></a></noscript><!--/DO NOT REMOVE/-->
+                        <!-- End SiteCatalyst code version: H.21. -->
+<script type="text/javascript" src="https://commsec.demdex.net/event?d_stuff=1&d_dst=1&d_rtbd=json&d_cts=1&d_cb=aam_tnt_cb"></script>
+<script type="text/javascript" src="/Static/f7496ae670fc1/common/js/wrapmbox.min.js"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+aspnetForm_submitted = false;
+YAHOO.util.Event.addListener("aspnetForm", "load", function() { aspnetForm_internalonsubmit = document.getElementById("aspnetForm").onsubmit; document.getElementById("aspnetForm").onsubmit = function() { if (!aspnetForm_submitted) { if (typeof(aspnetForm_internalonsubmit) != "function" || aspnetForm_internalonsubmit(arguments)) { aspnetForm_submitted = true; return true; } else {return false; } } else { return false; } } });
+//]]>
+</script>
+</form>
+	
+	
+<script type="text/javascript">
+
+    $(function() {
+
+        var chkSave = $('#ctl00_cpContent_ckSaveID');
+        var divMsg = $('#MessageBubble');
+        var btnMsgClose = $('#MessageClose');
+        
+        $(chkSave).click(function() {
+            if ($(chkSave)[0].checked) {
+                var x = $(chkSave).offset().left - 111;
+                var y = $(chkSave).offset().top + 14;
+
+                $(divMsg).css({ left: x, top: y });
+                $(divMsg).show();
+            }
+            else 
+            {
+                $(divMsg).hide();
+            }
+        });
+
+        $(btnMsgClose).click(function() {
+            $(divMsg).hide();
+        });
+
+        $(document).mouseup(function(e) {
+        var container = $(divMsg);
+            if (container.has(e.target).length === 0) {
+                container.hide();
+            }
+        });
+
+        var loginWaterMark = 'Client ID';
+        var pwdWaterMark = 'Password';
+        
+        if ($('#ctl00_cpContent_txtLogin').val().length == 0){
+            $('#ctl00_cpContent_txtLogin').val(loginWaterMark).addClass('watermark');
+        }
+        
+ 	    $('#ctl00_cpContent_txtLogin').blur(function(){
+  		    if ($(this).val().length == 0){
+    		    $(this).val(loginWaterMark).addClass('watermark');
+		    }
+ 	    });
+     
+	    $('#ctl00_cpContent_txtLogin').focus(function(){
+  		    if ($(this).val() == loginWaterMark){
+    		    $(this).val('').removeClass('watermark');
+		    }
+ 	    });
+ 	     	    
+ 	    $('#ctl00_cpContent_fakepassword').val(pwdWaterMark).addClass('watermark');
+				        
+ 	    $('#ctl00_cpContent_txtPassword').blur(function(){
+  		    if ($(this).val().length == 0){
+    		    $(this).hide();
+                $('#ctl00_cpContent_fakepassword').show();
+		    }
+ 	    });
+     
+	    $('#ctl00_cpContent_fakepassword').focus(function(){
+		    $(this).hide();
+            $('#ctl00_cpContent_txtPassword').show();
+            $('#ctl00_cpContent_txtPassword').focus();
+ 	    });
+    });
+        
+
+
+</script>
+        <script language="JavaScript" type="text/JavaScript">
+    
+   	    function StartRemote(url,popupname,width,height,top,left) 
+		{ 
+            var remoteWin = null;
+		    remoteWin = window.open(url, popupname, 'width='+ width + ',height='+ height +',top='+ top + ',left='+left+',scrollbars=yes,resizable=yes');
+		    return;
+		}
+		
+		function StartRemoteNoSize(url,popupname) 
+		{ 
+            var remoteWin = null;
+		    remoteWin = window.open(url, popupname, 'scrollbars=yes,resizable=yes');
+		    return;
+		}
+		
+		if (top.location != self.location) 
+		{
+	        top.location = self.location.href
+    	} 
+</script>
+    
+</body>
+</html>

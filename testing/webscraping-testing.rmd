@@ -1,0 +1,229 @@
+---
+title: "Playing with Webscraping"
+author: "KevinHo"
+date: "15 February 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## About
+
+This is my first exercise in webscraping using rvest
+I'm following the tutorial listed [here](https://blog.rstudio.org/2014/11/24/rvest-easy-web-scraping-with-r/).
+And the CRAN repository is [here](https://cran.r-project.org/web/packages/rvest/index.html)
+
+## Setup
+
+I'll be using the rvest package and I'll be scraping data from imdb.
+
+*NB: The `html()` function is no deprecated and replaced with the `read_html()` function.*
+
+```{r setupB}
+library(rvest)
+
+lego_movie <- read_html("http://www.imdb.com/title/tt1490017/")
+```
+
+## Get the data
+Use [selectorgadget](http://selectorgadget.com/) to find out which css selector we want to grab the data.
+
+Then we'll use `html_node()` to find the first node that matches the selector, extract the contents with `html_text()` and then convert it to a number using `as.numeric()`
+
+```{r getData}
+lego_movie %>%
+    html_node("strong span") %>%
+    html_text() %>%
+    as.numeric()
+```
+
+
+## My own version
+
+Now that I've run through the tutorial. Here is my own application using several data sources
+
+```{r googfinancescrape}
+pANZ <- read_html("https://www.google.com/finance?cid=675233")
+
+pANZ %>%
+    html_node("#price-panel .pr") %>%
+    html_text() %>%
+    as.numeric()
+
+```
+
+https://finance.yahoo.com/quote/ANZ.NZ?p=ANZ.NZ
+https://www.r-bloggers.com/r-code-yahoo-finance-data-loading/
+
+
+```{r yahoofinancescape}
+pANZ <- read_html("https://www.google.com/finance?cid=675233")
+
+pANZ %>%
+    html_node("#price-panel .pr") %>%
+    html_text() %>%
+    as.numeric()
+
+```
+
+
+yahoo finance time series
+
+```{r}
+#######################################################################
+##Alternate method to download all key stats using XML and x_path – PREFERRED WAY
+#######################################################################
+
+
+require(XML)
+require(plyr)
+getKeyStats_xpath <- function(symbol) {
+  yahoo.URL <- "http://finance.yahoo.com/q/ks?s="
+  html_text <- htmlParse(paste(yahoo.URL, symbol, sep = ""), encoding="UTF-8")
+
+  #search for <td> nodes anywhere that have class ‘yfnc_tablehead1’
+  nodes <- getNodeSet(html_text, "/*//td[@class='yfnc_tablehtthead1']")
+  
+  if(length(nodes) > 0 ) {
+   measures <- sapply(nodes, xmlValue)
+   
+   #Clean up the column name
+   measures <- gsub(" *[0-9]*:", "", gsub(" \\(.*?\\)[0-9]*:","", measures))   
+   
+   #Remove dups
+   dups <- which(duplicated(measures))
+   #print(dups) 
+   for(i in 1:length(dups)) 
+     measures[dups[i]] = paste(measures[dups[i]], i, sep=" ")
+   
+   #use siblings function to get value
+   values <- sapply(nodes, function(x)  xmlValue(getSibling(x)))
+   
+   df <- data.frame(t(values))
+   colnames(df) <- measures
+   return(df)
+  }
+}
+
+tickers <- c("AAPL")
+stats <- ldply(tickers, getKeyStats_xpath)
+rownames(stats) <- tickers
+write.csv(t(stats), "FinancialStats_updated.csv",row.names=TRUE)  
+```
+
+Lets try using httpRequest
+
+```{r}
+library(httpRequest)
+host <- "download.finance.yahoo.com"
+blah <- getToHost(host,"/d/quotes.csv?s=ANZ.AX&f=aboe","www.yahoo.com",80)
+
+#rather shitty way to get the data. But it works for the daily stock information. Now for financials.
+values <- strsplit(strsplit(gsub("\\n","",blah), ".*Connection: close\\r\\r")[[1]][2],",")[[1]]
+
+
+
+
+```
+
+
+```{r}
+library(XML)
+
+stocks <- c("ANZ.AX","BA","CAT","CSCO")
+
+for (s in stocks) {
+      url <- paste0("http://finviz.com/quote.ashx?t=", s)
+      webpage <- readLines(url)
+      html <- htmlTreeParse(webpage, useInternalNodes = TRUE, asText = TRUE)
+      tableNodes <- getNodeSet(html, "//table")
+
+      # ASSIGN TO STOCK NAMED DFS
+      assign(s, readHTMLTable(tableNodes[[9]], 
+                header= c("data1", "data2", "data3", "data4", "data5", "data6",
+                          "data7", "data8", "data9", "data10", "data11", "data12")))
+
+      # ADD COLUMN TO IDENTIFY STOCK 
+      df <- get(s)
+      df['stock'] <- s
+      assign(s, df)
+}
+
+# COMBINE ALL STOCK DATA 
+stockdatalist <- cbind(mget(stocks))
+stockdata <- do.call(rbind, stockdatalist)
+# MOVE STOCK ID TO FIRST COLUMN
+stockdata <- stockdata[, c(ncol(stockdata), 1:ncol(stockdata)-1)]
+
+# SAVE TO CSV
+write.table(stockdata, "C:/Users/Kevin/Documents/GitHub/HoGazzM-Value-Investing/testing/MyData.csv", sep=",", 
+            row.names=FALSE, col.names=FALSE)
+
+# REMOVE TEMP OBJECTS
+rm(df, stockdatalist)
+```
+
+```{r cbascrape}
+pANZ <- read_html("https://www.google.com/finance?cid=675233")
+
+pANZ %>%
+    html_node("#price-panel .pr") %>%
+    html_text() %>%
+    as.numeric()
+
+```
+
+Lets try using the httr package to get past teh login information in CBA
+
+```{r}
+source("../getCBAdata.R")
+source("../../Temp/temp.R")
+response <- loginCBA(username = anID, password = aPhrase)
+
+    #write the output to file
+    fileConn <- file("output.htm")
+    writeLines(content(response,"text"),fileConn)
+    close(fileConn)
+```
+    
+Lets try using RSelenium to handle the login
+http://stackoverflow.com/questions/40198182/403-error-when-using-rvest-to-log-into-website-for-scraping
+
+```{r}
+library(RSelenium)
+
+remDr <- RSelenium::remoteDriver(remoteServerAddr = "localhost", port = 4445L)
+
+
+remDr$open()
+remDr$navigate("https://www.google.com/trends/")
+remDr$getTitle()
+remDr$screenshot(display = TRUE)
+```
+
+Lets try Rselenium without docker. Help from StackO - RESOLVED MOTHER FUCKER!
+
+EDIT: I've now removed all instances of my username and password. Time to get to work
+
+```{r}
+library(RSelenium)
+
+source("../../Temp/temp.R")
+remDr <- remoteDriver()
+remDr$open()
+
+remDr$navigate("https://www2.commsec.com.au/Public/HomePage/Login.aspx")
+
+#send username
+username <- remDr$findElement(using = "id", value = "ctl00_cpContent_txtLogin")
+username$clearElement()
+username$sendKeysToElement(list(anID))
+
+#send password and Enter
+passwd <- remDr$findElement(using = "id", value = "ctl00_cpContent_fakepassword")
+passwd$clearElement()
+passwd$sendKeysToElement(list(aPhrase, "\uE007"))
+```

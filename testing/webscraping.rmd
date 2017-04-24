@@ -1,5 +1,5 @@
 ---
-title: "Playing with Webscraping"
+title: "Webscraping Commsec"
 author: "KevinHo"
 date: "15 February 2017"
 output: html_document
@@ -12,62 +12,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## About
 
-This is my first exercise in webscraping using rvest
+This is my first exercise in webscraping
 I'm following the tutorial listed [here](https://blog.rstudio.org/2014/11/24/rvest-easy-web-scraping-with-r/).
 And the CRAN repository is [here](https://cran.r-project.org/web/packages/rvest/index.html)
 
 ## Setup
 
-I'll be using the rvest package and I'll be scraping data from imdb.
-
-*NB: The `html()` function is no deprecated and replaced with the `read_html()` function.*
-
-```{r setupB}
-library(rvest)
-
-lego_movie <- read_html("http://www.imdb.com/title/tt1490017/")
-```
-
-## Get the data
-Use [selectorgadget](http://selectorgadget.com/) to find out which css selector we want to grab the data.
-
-Then we'll use `html_node()` to find the first node that matches the selector, extract the contents with `html_text()` and then convert it to a number using `as.numeric()`
-
-```{r getData}
-lego_movie %>%
-    html_node("strong span") %>%
-    html_text() %>%
-    as.numeric()
-```
-
-
-## My own version
-
-Now that I've run through the tutorial. Here is my own application using several data sources
-
-```{r googfinancescrape}
-pANZ <- read_html("https://www.google.com/finance?cid=675233")
-
-pANZ %>%
-    html_node("#price-panel .pr") %>%
-    html_text() %>%
-    as.numeric()
-
-```
-
-https://finance.yahoo.com/quote/ANZ.NZ?p=ANZ.NZ
-https://www.r-bloggers.com/r-code-yahoo-finance-data-loading/
-
-
-```{r yahoofinancescape}
-pANZ <- read_html("https://www.google.com/finance?cid=675233")
-
-pANZ %>%
-    html_node("#price-panel .pr") %>%
-    html_text() %>%
-    as.numeric()
-
-```
 
 
 yahoo finance time series
@@ -114,63 +64,49 @@ rownames(stats) <- tickers
 write.csv(t(stats), "FinancialStats_updated.csv",row.names=TRUE)  
 ```
 
-Lets try using httpRequest
+
+
+
+Lets try Rselenium without docker. Help from StackO - RESOLVED MOTHER FUCKER!
+
+EDIT: I've now removed all instances of my username and password. Time to get to work
 
 ```{r}
-library(httpRequest)
-host <- "download.finance.yahoo.com"
-blah <- getToHost(host,"/d/quotes.csv?s=ANZ.AX&f=aboe","www.yahoo.com",80)
+library(RSelenium)
 
-#rather shitty way to get the data. But it works for the daily stock information. Now for financials.
-values <- strsplit(strsplit(gsub("\\n","",blah), ".*Connection: close\\r\\r")[[1]][2],",")[[1]]
+remDr <- remoteDriver()
+remDr$open()
 
+remDr$navigate("https://www2.commsec.com.au/Public/HomePage/Login.aspx")
 
+#send username
+username <- remDr$findElement(using = "id", value = "ctl00_cpContent_txtLogin")
+username$clearElement()
+username$sendKeysToElement(list(anID))
 
+#send password and Enter
+passwd <- remDr$findElement(using = "id", value = "ctl00_cpContent_fakepassword")
+passwd$clearElement()
+passwd$sendKeysToElement(list(aPhrase, "\uE007"))
 
-```
+#ONCE LOGGED IN
+#send stock search
+stock <- remDr$findElement(using = "id", value ="ctl00_ucTopSearch_Input")
+stock$clearElement()
+stock$sendKeysToElement(list("MNY"))
+Sys.sleep(1)
+stock$sendKeysToElement(list("\uE007"))
 
+#goto company research
+compResearch <- remDr$findElement(using = 'css selector',".tab-inactive:nth-child(5) a")
+compResearch$clickElement()
 
-```{r}
-library(XML)
+#goto financials
+financials <- remDr$findElement(using = 'css selector',"#ctl00_BodyPlaceHolder_KeyMeasuresView1_ucCompanyProfilesHeader_hlFinancials")
+financials$clickElement()
 
-stocks <- c("ANZ.AX","BA","CAT","CSCO")
-
-for (s in stocks) {
-      url <- paste0("http://finviz.com/quote.ashx?t=", s)
-      webpage <- readLines(url)
-      html <- htmlTreeParse(webpage, useInternalNodes = TRUE, asText = TRUE)
-      tableNodes <- getNodeSet(html, "//table")
-
-      # ASSIGN TO STOCK NAMED DFS
-      assign(s, readHTMLTable(tableNodes[[9]], 
-                header= c("data1", "data2", "data3", "data4", "data5", "data6",
-                          "data7", "data8", "data9", "data10", "data11", "data12")))
-
-      # ADD COLUMN TO IDENTIFY STOCK 
-      df <- get(s)
-      df['stock'] <- s
-      assign(s, df)
-}
-
-# COMBINE ALL STOCK DATA 
-stockdatalist <- cbind(mget(stocks))
-stockdata <- do.call(rbind, stockdatalist)
-# MOVE STOCK ID TO FIRST COLUMN
-stockdata <- stockdata[, c(ncol(stockdata), 1:ncol(stockdata)-1)]
-
-# SAVE TO CSV
-write.table(stockdata, "C:/Users/Kevin/Documents/GitHub/HoGazzM-Value-Investing/testing/MyData.csv", sep=",", 
-            row.names=FALSE, col.names=FALSE)
-
-# REMOVE TEMP OBJECTS
-rm(df, stockdatalist)
-```
-```{r cbascape}
-pANZ <- read_html("https://www.google.com/finance?cid=675233")
-
-pANZ %>%
-    html_node("#price-panel .pr") %>%
-    html_text() %>%
-    as.numeric()
+#get a data
+datacell <- remDr$findElement(using = 'css selector',"#ctl00_BodyPlaceHolder_FinancialsView1_ctl01_ctl00_ctl01_lblYear10_field")
+datacell$getElementText()
 
 ```
