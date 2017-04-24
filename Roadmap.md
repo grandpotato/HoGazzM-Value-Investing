@@ -35,3 +35,6 @@ http://www.jmarshall.com/easy/http/
 
 Google Search
 https://www.google.co.th/webhp?sourceid=chrome-instant&rlz=1C1CHWA_enAU538AU538&ion=1&espv=2&ie=UTF-8#q=scraping+comsec&*
+
+Yahoo Portal
+http://wern-ancheta.com/blog/2015/04/05/getting-started-with-the-yahoo-finance-api/
