@@ -72,6 +72,14 @@ Lets try Rselenium without docker. Help from StackO - RESOLVED MOTHER FUCKER!
 EDIT: I've now removed all instances of my username and password. Time to get to work
 
 ```{r}
+
+#Install firefox
+#Download geckodriver and unzip the exe here c:\bin\geckodriver
+#Run the following in cmd >set PATH=%PATH%;C:\bin\geckodriver
+#start Selenium server by opening a command prompt and then type
+#cd ~YOUR_R_PATH~\library\RSelenium\bin
+#Download selenium server into the above location http://www.seleniumhq.org/download/ 
+#java -jar selenium-server-standalone-x.xx.x.jar
 library(RSelenium)
 
 remDr <- remoteDriver()
@@ -79,12 +87,8 @@ remDr$open()
 
 remDr$navigate("https://www2.commsec.com.au/Public/HomePage/Login.aspx")
 
-#send username
-username <- remDr$findElement(using = "id", value = "ctl00_cpContent_txtLogin")
-username$clearElement()
-username$sendKeysToElement(list(anID))
 
-#send password and Enter
+#send password and Enter - deprecated
 passwd <- remDr$findElement(using = "id", value = "ctl00_cpContent_fakepassword")
 passwd$clearElement()
 passwd$sendKeysToElement(list(aPhrase, "\uE007"))
@@ -96,6 +100,7 @@ The following script is used once you've logged in.
 #send stock search
 source("helpers.R")
 library(XML)
+library(stringi)
 
 stock <- remDr$findElement(using = "id", value ="ctl00_ucTopSearch_Input")
 stock$clearElement()
@@ -107,6 +112,7 @@ stock$sendKeysToElement(list("\uE007"))
 compResearch <- remDr$findElement(using = 'css selector',".tab-inactive:nth-child(5) a")
 Sys.sleep(1)
 compResearch$clickElement()
+Sys.sleep(1)
 
 #goto financials
 financials <- remDr$findElement(using = 'css selector',"#ctl00_BodyPlaceHolder_KeyMeasuresView1_ucCompanyProfilesHeader_hlFinancials")
@@ -117,4 +123,41 @@ financials$clickElement()
 doc <- htmlParse(remDr$getPageSource()[[1]])
 tables <- readHTMLTable(doc, header = TRUE)
 
+#clean the output
+i=1
+while(i < length(tables)+1) {
+    names(tables[[i]]) <- stri_trim(stri_replace_all_fixed(names(tables[[i]]),"\n",""))
+    
+    i = i+1
+    print(i)
+}
+
+
+rs <- record.new()
+
+#Iterate over this
+
+
+colnumber = 2
+while (colnumber < dim(tables[[1]])[2]) {
+    a <- data.frame("Company_Name" = "MNY",
+            "Dividends" = tables[[1]][which(tables[[1]][,1] %in% "Dividends (cents)"),][colnumber],
+            "Shares_Outstanding" = tables[[1]][which(tables[[1]][,1] %in% "Shares Outstanding (m)"),][colnumber],
+            "Revenues"  = tables[[2]][which(tables[[2]][,1] %in% "Revenues (m)"),][colnumber],
+            "Income_Tax_Rate" = tables[[2]][which(tables[[2]][,1] %in% "Income tax rate (%)"),][colnumber],
+            "Net_Profit_Before_Abnormals" = tables[[2]][which(tables[[2]][,1] %in% "Net Profit Before Abnormals (m)"),][colnumber],
+            "Net_Profit" = tables[[2]][which(tables[[2]][,1] %in% "Net Profit (m)"),][colnumber],
+            "Long_term_debt" = tables[[2]][which(tables[[2]][,1] %in% "Long term debt (m)"),][colnumber],
+            "Shareholders_Equity" = tables[[2]][which(tables[[2]][,1] %in% "Shareholders Equity (m)"),][colnumber],
+            "EBITDA" = tables[[2]][which(tables[[2]][,1] %in% "EBITDA (m)"),][colnumber],
+            "EBIT" = tables[[2]][which(tables[[2]][,1] %in% "EBIT (m)"),][colnumber],
+            "Total_Current_Assets" = tables[[4]][which(tables[[4]][,1] %in% "Total Current Assets"),][2],
+            "Total_Current Liabilities"= tables[[4]][which(tables[[4]][,1] %in% "Total Current Liabilities"),][2])
+    rs<-cbind(rs,a)
+    colnumber = colnumber +1
+}
+
 ```
+
+ 
+ 
