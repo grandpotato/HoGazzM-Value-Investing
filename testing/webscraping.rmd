@@ -1,0 +1,120 @@
+---
+title: "Webscraping Commsec"
+author: "KevinHo"
+date: "15 February 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## About
+
+This is my first exercise in webscraping
+I'm following the tutorial listed [here](https://blog.rstudio.org/2014/11/24/rvest-easy-web-scraping-with-r/).
+And the CRAN repository is [here](https://cran.r-project.org/web/packages/rvest/index.html)
+
+## Setup
+
+
+
+yahoo finance time series
+
+```{r}
+#######################################################################
+##Alternate method to download all key stats using XML and x_path – PREFERRED WAY
+#######################################################################
+
+
+require(XML)
+require(plyr)
+getKeyStats_xpath <- function(symbol) {
+  yahoo.URL <- "http://finance.yahoo.com/q/ks?s="
+  html_text <- htmlParse(paste(yahoo.URL, symbol, sep = ""), encoding="UTF-8")
+
+  #search for <td> nodes anywhere that have class ‘yfnc_tablehead1’
+  nodes <- getNodeSet(html_text, "/*//td[@class='yfnc_tablehtthead1']")
+  
+  if(length(nodes) > 0 ) {
+   measures <- sapply(nodes, xmlValue)
+   
+   #Clean up the column name
+   measures <- gsub(" *[0-9]*:", "", gsub(" \\(.*?\\)[0-9]*:","", measures))   
+   
+   #Remove dups
+   dups <- which(duplicated(measures))
+   #print(dups) 
+   for(i in 1:length(dups)) 
+     measures[dups[i]] = paste(measures[dups[i]], i, sep=" ")
+   
+   #use siblings function to get value
+   values <- sapply(nodes, function(x)  xmlValue(getSibling(x)))
+   
+   df <- data.frame(t(values))
+   colnames(df) <- measures
+   return(df)
+  }
+}
+
+tickers <- c("AAPL")
+stats <- ldply(tickers, getKeyStats_xpath)
+rownames(stats) <- tickers
+write.csv(t(stats), "FinancialStats_updated.csv",row.names=TRUE)  
+```
+
+
+
+
+Lets try Rselenium without docker. Help from StackO - RESOLVED MOTHER FUCKER!
+
+EDIT: I've now removed all instances of my username and password. Time to get to work
+
+```{r}
+library(RSelenium)
+
+remDr <- remoteDriver()
+remDr$open()
+
+remDr$navigate("https://www2.commsec.com.au/Public/HomePage/Login.aspx")
+
+#send username
+username <- remDr$findElement(using = "id", value = "ctl00_cpContent_txtLogin")
+username$clearElement()
+username$sendKeysToElement(list(anID))
+
+#send password and Enter
+passwd <- remDr$findElement(using = "id", value = "ctl00_cpContent_fakepassword")
+passwd$clearElement()
+passwd$sendKeysToElement(list(aPhrase, "\uE007"))
+```
+
+The following script is used once you've logged in.
+```{r}
+#ONCE LOGGED IN
+#send stock search
+source("helpers.R")
+library(XML)
+
+stock <- remDr$findElement(using = "id", value ="ctl00_ucTopSearch_Input")
+stock$clearElement()
+stock$sendKeysToElement(list("MNY"))
+Sys.sleep(1)
+stock$sendKeysToElement(list("\uE007"))
+
+#goto company research
+compResearch <- remDr$findElement(using = 'css selector',".tab-inactive:nth-child(5) a")
+Sys.sleep(1)
+compResearch$clickElement()
+
+#goto financials
+financials <- remDr$findElement(using = 'css selector',"#ctl00_BodyPlaceHolder_KeyMeasuresView1_ucCompanyProfilesHeader_hlFinancials")
+Sys.sleep(1)
+financials$clickElement()
+
+#Convert Page to tables
+doc <- htmlParse(remDr$getPageSource()[[1]])
+tables <- readHTMLTable(doc, header = TRUE)
+
+```

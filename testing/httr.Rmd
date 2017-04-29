@@ -1,0 +1,170 @@
+---
+title: "Playing with httr"
+author: "KevinHo"
+date: "20 April 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+This document is my experiments to learn how to user the httr package
+
+I'll be following the quickstart guide here
+https://cran.r-project.org/web/packages/httr/vignettes/quickstart.html
+
+Before testing logging in with different webportals.
+
+##httr quickstart guide
+
+Making a request
+```{r}
+library(httr)
+testURL <- "http://httpbin.org/get"
+r <- GET(testURL)
+```
+
+The first few lines of output
+```{r}
+r
+```
+
+Running some common commands
+```{r}
+status_code(r)
+
+headers(r)
+
+str(content(r))
+```
+
+##The Response
+
+```{r}
+http_status(r)
+
+r$status_code
+```
+
+###The Status Code
+The status code should be checked. Using warn_for_status, stop_for_status make sure if the connection fails.
+```{r}
+warn_for_status(r)
+
+falseURL <- "http://httpbin.org/getMadeup"
+errorResponse <- GET(falseURL)
+
+warn_for_status(errorResponse)
+#stop_for_status(errorResponse) # having knitr evaluate this will stop knitr
+```
+
+###The Body
+Content of the response can be parsed using the `content()` command. Depending on how you wat the response. httr automatically parses several content types using the "parse" arguement. see `?content` for a full list.
+
+```{r}
+content(r,"text")
+content(r,"parse")
+content(r,"raw")
+stringi::stri_enc_detect(content(r, "raw"))
+```
+
+###The Headers
+
+The header can be accessed using the `headers()` command.
+
+```{r}
+headers(r)
+```
+
+###Cookies
+
+Cookies can be accessed in a similar way 
+*KH: Not a good example here. Site must have changed. I'll take their word on it for now*
+```{r}
+r <- GET("http://httpbin.org/cookies/set", query = list(a = 1))
+cookies(r)
+```
+
+##The Request
+Like the response, the request consists of three pieces: a status line, headers and a body. The status line defines the http method (GET, POST, DELETE, etc) and the url. You can send additional data to the server in the url (with the query string), in the headers (including cookies) and in the body of POST(), PUT() and PATCH() requests.
+
+
+###The URL Query String
+A common way of sending simple key-value pairs to the server is the query string: `e.g. http://httpbin.org/get?key=val`. httr allows you to provide these arguments as a named list with the query argument. For example, if you wanted to pass `key1=value1` and `key2=value2` to `http://httpbin.org/get` you could do:
+
+```{r}
+r <- GET("http://httpbin.org/get", query = list(key1 = "value1", key2 = "value1"))
+
+content(r)$args
+```
+
+###Customer Headers
+
+You can also add custom headers by doing the following
+
+```{r}
+r <- GET("http://httpbin.org/get", add_headers(Name = "Hadley"))
+
+str(content(r)$headers)
+
+content(r)$headers
+
+headers(r)
+```
+
+###Cookies
+Cookies are simple key-value pairs like the query string, but they persist across multiple requests in a session (because they're sent back and forth every time). To send your own cookies to the server, use set_cookies():
+
+
+```{r}
+r <- GET("http://httpbin.org/cookies", set_cookies("Mewant"= "Cookies"))
+
+content(r)$cookies
+
+```
+
+###Request Body
+When POST()ing, you can include data in the body of the request. httr allows you to supply this in a number of different ways. The most common way is a named list:
+
+```{r}
+POST("http://httpbin.org/post", body = list(a = 1, b = 2, c = 3))
+```
+
+You can use the encode argument to determine how this data is sent to the server:
+
+```{r}
+url <- "http://httpbin.org/post"
+body <- list(a = 1, b = 2, c = 3)
+
+
+r <- POST(url, body = body, encode = "form")
+r <- POST(url, body = body, encode = "multipart")
+r <- POST(url, body = body, encode = "json")
+
+
+```
+
+To see exactly what's being sent to the server, use verbose(). Unfortunately due to the way that verbose() works, knitr can't capture the messages, so you'll need to run these from an interactive console to see what's going on.
+
+```{r}
+POST(url, body = body, encode = "multipart", verbose()) # the default
+POST(url, body = body, encode = "form", verbose())
+POST(url, body = body, encode = "json", verbose())
+```
+
+PUT() and PATCH() can also have request bodies, and they identically to POST().
+
+You can also send files off disk:
+
+```{r, eval= FALSE}
+POST(url, body = upload_file("mypath.txt"))
+POST(url, body = list(x = upload_file("mypath.txt")))
+```
+
+(upload_file() will guess the mime-type from the extension - using the type argument to override/supply yourself.)
+
+These uploads stream the data to the server: the data will be loaded in R in chunks then sent to the remote server. This means that you can upload files that are larger than memory.
+
+See POST() for more details on the other types of thing that you can send: no body, empty body, and character and raw vectors.
