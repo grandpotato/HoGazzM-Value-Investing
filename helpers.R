@@ -6,7 +6,7 @@ findCompanyHistoricals <- function(tables) {
         }
         
     }
-    tables[result]
+    tables[result][[1]]
 }
 
 findHistoricalFinancials <- function(tables) {
@@ -17,7 +17,7 @@ findHistoricalFinancials <- function(tables) {
         }
         
     }
-    tables[result]
+    tables[result][[1]]
 }
 
 findBalanceSheet <- function(tables) {
@@ -28,7 +28,7 @@ findBalanceSheet <- function(tables) {
         }
         
     }
-    tables[result]
+    tables[result][[1]]
 }
 
 getTable <- function(tables, targetTable) {
@@ -39,25 +39,26 @@ getTable <- function(tables, targetTable) {
         }
         
     }
-    tables[result]
+    tables[result][[1]]
 }
 
 
 record.new <-function() {
-   a <-  data.frame(row.names = c("Company_Name",
-                                  "Dividends",
-                                  "Shares_Outstanding",
-                                  "Revenues",
-                                  "Income_Tax_Rate",
-                                  "Net_Profit_Before_Abnormals",
-                                  "Net_Profit",
-                                  "Long_term_debt",
-                                  "Shareholders_Equity",
-                                  "EBITDA",
-                                  "EBIT",
-                                  "Total_Current_Assets",
-                                  "Total_Current Liabilities"
-   ))
+   a <-  data.frame("Company_Name" =character(0),
+                      "Date" = character(0),
+                      "Dividends" = numeric(0),
+                      "Shares_Outstanding" = numeric(0),
+                      "Revenues" = numeric(0),
+                      "Income_Tax_Rate" = numeric(0),
+                      "Net_Profit_Before_Abnormals" = numeric(0),
+                      "Net_Profit" = numeric(0),
+                      "Long_term_debt" = numeric(0),
+                      "Shareholders_Equity" = numeric(0),
+                      "EBITDA" = numeric(0),
+                      "EBIT" = numeric(0),
+                      "Total_Current_Assets" = numeric(0),
+                      "Total_Current_Liabilities" = numeric(0)
+   )
     
     
 }

@@ -88,73 +88,92 @@ remDr$open()
 remDr$navigate("https://www2.commsec.com.au/Public/HomePage/Login.aspx")
 
 
-#send password and Enter - deprecated
-passwd <- remDr$findElement(using = "id", value = "ctl00_cpContent_fakepassword")
-passwd$clearElement()
-passwd$sendKeysToElement(list(aPhrase, "\uE007"))
+# send password and Enter - deprecated
+# passwd <- remDr$findElement(using = "id", value = "ctl00_cpContent_fakepassword")
+# passwd$clearElement()
+# passwd$sendKeysToElement(list(aPhrase, "\uE007"))
 ```
 
 The following script is used once you've logged in.
 ```{r}
 #ONCE LOGGED IN
+#navigate to a financials page for a stock
 #send stock search
 source("helpers.R")
 library(XML)
 library(stringi)
+library(dplyr)
 
-stock <- remDr$findElement(using = "id", value ="ctl00_ucTopSearch_Input")
-stock$clearElement()
-stock$sendKeysToElement(list("MNY"))
-Sys.sleep(1)
-stock$sendKeysToElement(list("\uE007"))
+sleepytime <- 5
 
-#goto company research
-compResearch <- remDr$findElement(using = 'css selector',".tab-inactive:nth-child(5) a")
-Sys.sleep(1)
-compResearch$clickElement()
-Sys.sleep(1)
+conn <- file("data/20170201-all-ords.csv","r")
+allords <- read.csv(conn, header = TRUE, skip = 1 )
+close(conn)
 
-#goto financials
-financials <- remDr$findElement(using = 'css selector',"#ctl00_BodyPlaceHolder_KeyMeasuresView1_ucCompanyProfilesHeader_hlFinancials")
-Sys.sleep(1)
-financials$clickElement()
-
-#Convert Page to tables
-doc <- htmlParse(remDr$getPageSource()[[1]])
-tables <- readHTMLTable(doc, header = TRUE)
-
-#clean the output
-i=1
-while(i < length(tables)+1) {
-    names(tables[[i]]) <- stri_trim(stri_replace_all_fixed(names(tables[[i]]),"\n",""))
+for(stockcode in allords[[1]]){
+    stock <- remDr$findElement(using = "id", value ="ctl00_BodyPlaceHolder_FinancialsView1_ucCompanyProfilesHeader_ucSecuritySearch_txtSmartSearch_Input")
+    stock$clearElement()
+    stock$sendKeysToElement(list(stockcode))
+    Sys.sleep(sleepytime)
+    stock$sendKeysToElement(list("\uE007"))
+    Sys.sleep(sleepytime)
     
-    i = i+1
-    print(i)
-}
-
-
-rs <- record.new()
-
-#Iterate over this
-
-
-colnumber = 2
-while (colnumber < dim(tables[[1]])[2]) {
-    a <- data.frame("Company_Name" = "MNY",
-            "Dividends" = tables[[1]][which(tables[[1]][,1] %in% "Dividends (cents)"),][colnumber],
-            "Shares_Outstanding" = tables[[1]][which(tables[[1]][,1] %in% "Shares Outstanding (m)"),][colnumber],
-            "Revenues"  = tables[[2]][which(tables[[2]][,1] %in% "Revenues (m)"),][colnumber],
-            "Income_Tax_Rate" = tables[[2]][which(tables[[2]][,1] %in% "Income tax rate (%)"),][colnumber],
-            "Net_Profit_Before_Abnormals" = tables[[2]][which(tables[[2]][,1] %in% "Net Profit Before Abnormals (m)"),][colnumber],
-            "Net_Profit" = tables[[2]][which(tables[[2]][,1] %in% "Net Profit (m)"),][colnumber],
-            "Long_term_debt" = tables[[2]][which(tables[[2]][,1] %in% "Long term debt (m)"),][colnumber],
-            "Shareholders_Equity" = tables[[2]][which(tables[[2]][,1] %in% "Shareholders Equity (m)"),][colnumber],
-            "EBITDA" = tables[[2]][which(tables[[2]][,1] %in% "EBITDA (m)"),][colnumber],
-            "EBIT" = tables[[2]][which(tables[[2]][,1] %in% "EBIT (m)"),][colnumber],
-            "Total_Current_Assets" = tables[[4]][which(tables[[4]][,1] %in% "Total Current Assets"),][2],
-            "Total_Current Liabilities"= tables[[4]][which(tables[[4]][,1] %in% "Total Current Liabilities"),][2])
-    rs<-cbind(rs,a)
-    colnumber = colnumber +1
+    #Convert Page to tables
+    doc <- htmlParse(remDr$getPageSource()[[1]])
+    tables <- readHTMLTable(doc, header = TRUE)
+    
+    #clean the output
+    i=1
+    
+    while(i < length(tables)+1) {
+        names(tables[[i]]) <- stri_trim(stri_replace_all_fixed(names(tables[[i]]),"\n",""))
+        
+        i = i+1
+    }
+    
+    companyHistoricals <- findCompanyHistoricals(tables)
+    historicalFinancials <- findHistoricalFinancials(tables)
+    balanceSheet <- findBalanceSheet(tables)
+    
+    #Iterate over this
+    
+    colnumber = 2
+    rs <- record.new()
+    while (colnumber <= dim(companyHistoricals)[2]) {
+        a <- data.frame(
+                "Company_Name" =stockcode
+                 ,"Date" = names(companyHistoricals)[colnumber]
+                 ,"Dividends" = ifelse(length(which(companyHistoricals[,1] %in% "Dividends (cents)")) == 0,NA, as.numeric(gsub("[^0-9\\.]","",as.character(companyHistoricals[which(companyHistoricals[,1] %in% "Dividends (cents)"),][colnumber][[1]]))))
+                 ,"Shares_Outstanding" = ifelse(length(which(companyHistoricals[,1] %in% "Shares Outstanding (m)")) == 0, NA, as.numeric(gsub("[^0-9\\.]","",as.character(companyHistoricals[which(companyHistoricals[,1] %in% "Shares Outstanding (m)"),][colnumber][[1]]))))
+                 ,"Revenues" = ifelse(length(which(historicalFinancials[,1] %in% "Revenues (m)")) == 0, NA, as.numeric(gsub("[^0-9\\.]","",as.character(historicalFinancials[which(historicalFinancials[,1] %in% "Revenues (m)"),][colnumber][[1]]))))
+                 ,"Income_Tax_Rate" = ifelse(length(which(historicalFinancials[,1] %in% "Income tax rate (%)")) == 0, NA, as.numeric(gsub("[^0-9\\.]","",as.character(historicalFinancials[which(historicalFinancials[,1] %in% "Income tax rate (%)"),][colnumber][[1]]))))
+                 ,"Net_Profit_Before_Abnormals" = ifelse(length(which(historicalFinancials[,1] %in% "Net Profit Before Abnormals (m)")) == 0, NA, as.numeric(gsub("[^0-9\\.]","",as.character(historicalFinancials[which(historicalFinancials[,1] %in% "Net Profit Before Abnormals (m)"),][colnumber][[1]]))))
+                 ,"Net_Profit" = ifelse(length(which(historicalFinancials[,1] %in% "Net Profit (m)")) == 0, NA, as.numeric(gsub("[^0-9\\.]","",as.character(historicalFinancials[which(historicalFinancials[,1] %in% "Net Profit (m)"),][colnumber][[1]]))))
+                 ,"Long_term_debt" = ifelse(length(which(historicalFinancials[,1] %in% "Long term debt (m)")) == 0, NA, as.numeric(gsub("[^0-9\\.]","",as.character(historicalFinancials[which(historicalFinancials[,1] %in% "Long term debt (m)"),][colnumber][[1]]))))
+                 ,"Shareholders_Equity" = ifelse(length(which(historicalFinancials[,1] %in% "Shareholders Equity (m)")) == 0, NA, as.numeric(gsub("[^0-9\\.]","",as.character(historicalFinancials[which(historicalFinancials[,1] %in% "Shareholders Equity (m)"),][colnumber][[1]]))))
+                 ,"EBITDA" = ifelse(length(which(historicalFinancials[,1] %in% "EBITDA (m)")) == 0, NA, as.numeric(gsub("[^0-9\\.]","",as.character(historicalFinancials[which(historicalFinancials[,1] %in% "EBITDA (m)"),][colnumber][[1]]))))
+                 ,"EBIT" = ifelse(length(which(historicalFinancials[,1] %in% "EBIT (m)")) == 0, NA, as.numeric(gsub("[^0-9\\.]","",as.character(historicalFinancials[which(historicalFinancials[,1] %in% "EBIT (m)"),][colnumber][[1]]))))
+                 ,"Total_Current_Assets" = NA
+                 ,"Total_Current_Liabilities" = NA 
+                   
+        )
+        rs<-rbind(rs,a)
+        colnumber <- colnumber + 1
+    }
+    
+    rsd <- tbl_df(rs)
+    
+    colnumber = 2
+    while (colnumber <= dim(balanceSheet)[2]) {
+        rsd <- mutate(rsd
+                ,Total_Current_Assets = ifelse(Date== paste(names(balanceSheet)[colnumber],"/06",sep=""), as.numeric(gsub("[^0-9\\.]","",as.character(balanceSheet[which(balanceSheet[,1] %in% "Total Current Assets"),][colnumber][[1]]))),Total_Current_Assets)
+               
+                ,Total_Current_Liabilities = ifelse(Date== paste(names(balanceSheet)[colnumber],"/06",sep=""), as.numeric(gsub("[^0-9\\.]","",as.character(balanceSheet[which(balanceSheet[,1] %in% "Total Current Liabilities"),][colnumber][[1]]))),Total_Current_Liabilities) 
+        )
+        colnumber <- colnumber + 1
+    }
+    
+    write.csv(rsd,paste("loading/",format(Sys.time(), "%y%m%d %H%M%S")," ",stockcode,".csv",sep = "") )
 }
 
 ```
