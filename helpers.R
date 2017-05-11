@@ -62,3 +62,15 @@ record.new <-function() {
     
     
 }
+
+randomSleep <- function() Sys.sleep(round(rnorm(1,mean=60,sd=15)))
+
+
+openStockPage <- function(stockcode, remDr){
+    stockSearchBox <- remDr$findElement(using = "id", value ="ctl00_BodyPlaceHolder_FinancialsView1_ucCompanyProfilesHeader_ucSecuritySearch_txtSmartSearch_Input")
+    stockSearchBox$clearElement()
+    stockSearchBox$sendKeysToElement(list(stockcode))
+    Sys.sleep(5)
+    stockSearchBox$sendKeysToElement(list("\uE007")) #Send enter
+    Sys.sleep(5)
+}
