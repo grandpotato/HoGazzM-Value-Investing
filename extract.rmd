@@ -1,0 +1,60 @@
+---
+title: "Webscraping Commsec"
+author: "KevinHo"
+date: "15 February 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+
+```{r}
+#Install firefox
+#Download geckodriver and unzip the exe here c:\bin\geckodriver
+#Run the following in cmd >set PATH=%PATH%;C:\bin\geckodriver
+#start Selenium server by opening a command prompt and then type
+#cd ~YOUR_R_PATH~\library\RSelenium\bin
+#Download selenium server into the above location http://www.seleniumhq.org/download/ 
+#java -jar selenium-server-standalone-x.xx.x.jar
+library(RSelenium)
+
+remDr <- remoteDriver()
+remDr$open()
+
+remDr$navigate("https://www2.commsec.com.au/Public/HomePage/Login.aspx")
+
+#login using your credentials in the firefox browser
+```
+
+The following script is used once you've logged in.
+```{r}
+#ONCE LOGGED IN
+#navigate to a financials page for a stock
+#send stock search
+#make a proper class for this
+source("helpers.R")
+library(XML)
+conn <- file("data/20170201-all-ords.csv","r")
+codelist <- read.csv(conn, header = TRUE, skip = 1 )[[1]] #We only want the first column of the csv
+close(conn)
+
+
+for(stockcode in codelist[300:length(codelist)]){
+    
+    openStockPage(stockcode, remDr)
+    
+    stockPageHTML <- htmlParse(remDr$getPageSource()[[1]])
+    
+    outputLocation <- paste("extract/",format(Sys.time(), "%y%m%d %H%M%S")," ",stockcode,".txt",sep = "")
+    capture.output(stockPageHTML, file = outputLocation)
+    randomSleep()
+    
+}
+
+```
+
+ 
+ 

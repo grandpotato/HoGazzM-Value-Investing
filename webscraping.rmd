@@ -104,19 +104,19 @@ library(XML)
 library(stringi)
 library(dplyr)
 
-sleepytime <- 5
-
 conn <- file("data/20170201-all-ords.csv","r")
 allords <- read.csv(conn, header = TRUE, skip = 1 )
 close(conn)
 
-for(stockcode in allords[[1]]){
+
+
+for(stockcode in allords[[1]][1:50]){
     stock <- remDr$findElement(using = "id", value ="ctl00_BodyPlaceHolder_FinancialsView1_ucCompanyProfilesHeader_ucSecuritySearch_txtSmartSearch_Input")
     stock$clearElement()
     stock$sendKeysToElement(list(stockcode))
-    Sys.sleep(sleepytime)
+    sleepytime()
     stock$sendKeysToElement(list("\uE007"))
-    Sys.sleep(sleepytime)
+    sleepytime()
     
     #Convert Page to tables
     doc <- htmlParse(remDr$getPageSource()[[1]])
@@ -166,9 +166,9 @@ for(stockcode in allords[[1]]){
     colnumber = 2
     while (colnumber <= dim(balanceSheet)[2]) {
         rsd <- mutate(rsd
-                ,Total_Current_Assets = ifelse(Date== paste(names(balanceSheet)[colnumber],"/06",sep=""), as.numeric(gsub("[^0-9\\.]","",as.character(balanceSheet[which(balanceSheet[,1] %in% "Total Current Assets"),][colnumber][[1]]))),Total_Current_Assets)
+                ,Total_Current_Assets = ifelse(substr(Date,1,4) == names(balanceSheet)[colnumber], as.numeric(gsub("[^0-9\\.]","",as.character(balanceSheet[which(balanceSheet[,1] %in% "Total Current Assets"),][colnumber][[1]]))),Total_Current_Assets)
                
-                ,Total_Current_Liabilities = ifelse(Date== paste(names(balanceSheet)[colnumber],"/06",sep=""), as.numeric(gsub("[^0-9\\.]","",as.character(balanceSheet[which(balanceSheet[,1] %in% "Total Current Liabilities"),][colnumber][[1]]))),Total_Current_Liabilities) 
+                ,Total_Current_Liabilities = ifelse(substr(Date,1,4) == names(balanceSheet)[colnumber], as.numeric(gsub("[^0-9\\.]","",as.character(balanceSheet[which(balanceSheet[,1] %in% "Total Current Liabilities"),][colnumber][[1]]))),Total_Current_Liabilities) 
         )
         colnumber <- colnumber + 1
     }
