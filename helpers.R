@@ -44,7 +44,7 @@ getTable <- function(tables, targetTable) {
 
 
 record.new <-function() {
-   a <-  data.frame("Company_Name" =character(0),
+   a <-  data.frame("StockCode" =character(0),
                       "Date" = character(0),
                       "Dividends" = numeric(0),
                       "Shares_Outstanding" = numeric(0),
