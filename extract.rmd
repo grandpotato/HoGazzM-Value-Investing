@@ -48,7 +48,7 @@ for(stockcode in codelist[300:length(codelist)]){
     
     stockPageHTML <- htmlParse(remDr$getPageSource()[[1]])
     
-    outputLocation <- paste("extract/",format(Sys.time(), "%y%m%d %H%M%S")," ",stockcode,".txt",sep = "")
+    outputLocation <- paste("extract/",format(Sys.Date()), format(Sys.time(), "%H%M%S")," ",stockcode,".txt",sep = "")
     capture.output(stockPageHTML, file = outputLocation)
     randomSleep()
     
